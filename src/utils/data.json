@@ -1,0 +1,13 @@
+{
+  "name": "渡火者的醒悟",
+  "pos": "空之杯",
+  "star": 5,
+  "level": 20,
+  "main_item": { "type": "pyro", "name": "火元素伤害加成", "value": "46.6%" },
+  "sub_item": [
+    { "type": "hp", "name": "生命值", "value": "5.3%" },
+    { "type": "er", "name": "元素充能效率", "value": "21.4%" },
+    { "type": "cr", "name": "暴击率", "value": "6.2%" },
+    { "type": "cd", "name": "暴击伤害", "value": "12.4%" }
+  ]
+}

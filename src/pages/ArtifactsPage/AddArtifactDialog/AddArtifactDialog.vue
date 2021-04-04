@@ -97,8 +97,11 @@ import { getDetailName, getArtifactRealValue } from "@util/utils";
 import randomNormalTag from "@/artifacts_numeric/random_normal_tag";
 import { convertDisplayTagValue } from '@util/utils';
 import isArtifactUnique from "@util/isArtifactUnique";
+import { callOcrGetArtifactProps} from "@util/ocr";
+
 import { artifactsData } from "@asset/artifacts";
 import { secondaryTags } from "@asset/tags";
+
 
 function convertPercentage(item) {
     item.value = getArtifactRealValue(item.name, item.value);
@@ -227,6 +230,29 @@ export default {
             this.$emit("close");
         },
 
+        onPaste(event) {
+            if (!this.visible) return
+
+            const file = event.clipboardData.files[0]
+
+            if (!file) return
+
+            const fr = new FileReader()
+
+            fr.onload = async () => {
+                const image = fr.result.replace('data:image/png;base64,', '')
+
+                const result = await callOcrGetArtifactProps(image)
+
+                this.normalTags = result.normalTags
+                this.mainTag = result.mainTag
+                this.position = result.position
+                this.setName = result.setName
+            }
+
+            fr.readAsDataURL(file)
+        },
+
         shuffleNormalTags() {
             let temp = randomNormalTag(5, 20, [this.mainTag.name]);
             for (let i = 0, l = temp.length; i < l; i++) {
@@ -245,7 +271,13 @@ export default {
         artifactData() {
             return artifactsData[this.setName];
         }
-    }
+    },
+    created() {
+        document.body.addEventListener('paste', this.onPaste)
+        this.$on('hook:beforeDestroy', () => {
+            document.body.removeEventListener('paste', this.onPaste)
+        })
+    },
 }
 </script>
 
